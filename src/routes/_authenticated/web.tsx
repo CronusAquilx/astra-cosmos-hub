@@ -89,10 +89,14 @@ function Web() {
       </form>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {tab.url ? (
-          <div className="flex h-full flex-col">
-            <iframe key={tab.url} src={tab.url} title={tab.title} className="w-full flex-1 bg-background" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" />
-            <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">Page blank? Some sites don't allow being shown inside other apps — use the open-in-new-window button.</p>
-          </div>
+          prefs.proxyEnabled ? (
+            <ProxiedFrame key={tab.url} url={tab.url} title={tab.title} prefs={prefs} />
+          ) : (
+            <div className="flex h-full flex-col">
+              <iframe key={tab.url} src={tab.url} title={tab.title} className="w-full flex-1 bg-background" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" />
+              <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">Page blank? Some sites don't allow being shown inside other apps — use the open-in-new-window button.</p>
+            </div>
+          )
         ) : tab.loading ? (
           <p className="p-6 text-sm text-muted-foreground">Searching…</p>
         ) : tab.results ? (
