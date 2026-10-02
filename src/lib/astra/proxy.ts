@@ -58,21 +58,33 @@ function waitForActive(reg: ServiceWorkerRegistration): Promise<ServiceWorker> {
   });
 }
 
+async function makeTransport(transport: Prefs["transport"], custom: string): Promise<any> {
+  if (transport !== "astra") {
+    const wisp = await pickWisp(custom).catch(() => null);
+    if (wisp) {
+      try {
+        const t = transport === "libcurl"
+          ? new (await import("@mercuryworkshop/libcurl-transport")).default({ wisp })
+          : new (await import("@mercuryworkshop/epoxy-transport")).default({ wisp });
+        await t.init();
+        return t;
+      } catch { /* fall through to the Astra relay */ }
+    }
+  }
+  const { AstraRelayTransport } = await import("./relay-transport");
+  const t = new AstraRelayTransport();
+  await t.init();
+  return t;
+}
+
 async function buildController(transport: Prefs["transport"], custom: string): Promise<Controller> {
-  const [wisp] = await Promise.all([pickWisp(custom), loadProxyScripts()]);
+  await loadProxyScripts();
   const { Controller } = (globalThis as Record<string, any>)["$scramjetController"] as {
     Controller: new (init: any) => Controller;
   };
-  const [{ default: EpoxyTransport }, { default: LibcurlClient }] = await Promise.all([
-    import("@mercuryworkshop/epoxy-transport"),
-    import("@mercuryworkshop/libcurl-transport"),
-  ]);
 
   const reg = await navigator.serviceWorker.register("/scramjet/sw.js", { scope: "/scramjet/p/" });
-  const sw = await waitForActive(reg);
-
-  const t = transport === "libcurl" ? new LibcurlClient({ wisp }) : new EpoxyTransport({ wisp });
-  await t.init();
+  const [sw, t] = await Promise.all([waitForActive(reg), makeTransport(transport, custom)]);
 
   return new Controller({
     serviceworker: sw,
