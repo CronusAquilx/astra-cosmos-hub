@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { searchUrl, usePrefs } from "@/lib/astra/prefs";
 import { ExternalLink, Globe, Plus, Search, X } from "lucide-react";
 import { webSearch } from "@/lib/astra/web.functions";
 import { MobileMenuButton } from "@/components/astra/AppShell";
@@ -8,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/web")({
   head: () => ({ meta: [{ title: "Web — Astra" }] }),
+  validateSearch: (s: Record<string, unknown>): { q?: string } => (typeof s["q"] === "string" && s["q"] ? { q: s["q"] } : {}),
   component: Web,
 });
 
@@ -18,22 +20,32 @@ const blank = (): Tab => ({ id: nextId++, title: "New tab", query: "", results: 
 
 function Web() {
   const search = useServerFn(webSearch);
+  const { q: initialQ } = Route.useSearch();
+  const prefs = usePrefs();
   const [tabs, setTabs] = useState<Tab[]>(() => [blank()]);
   const [active, setActive] = useState(tabs[0]!.id);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialQ ?? "");
   const tab = tabs.find((t) => t.id === active) ?? tabs[0]!;
   const patch = (id: number, p: Partial<Tab>) => setTabs((ts) => ts.map((t) => (t.id === id ? { ...t, ...p } : t)));
 
-  async function go(e?: React.FormEvent) {
+  useEffect(() => {
+    if (initialQ) void go(undefined, initialQ);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQ]);
+
+  async function go(e?: React.FormEvent, override?: string) {
     e?.preventDefault();
-    const q = input.trim();
+    const q = (override ?? input).trim();
     if (!q) return;
     const id = tab.id;
     if (/^https?:\/\/\S+$/i.test(q) || /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(q)) {
       const url = q.startsWith("http") ? q : `https://${q}`;
+      if (prefs.openLinksInNewTab) { window.open(url, "_blank", "noopener"); return; }
       patch(id, { url, title: new URL(url).hostname, query: q });
       return;
     }
+    const ext = searchUrl(q, prefs.searchEngine);
+    if (ext) { window.open(ext, "_blank", "noopener"); return; }
     patch(id, { loading: true, query: q, title: q, url: null });
     const { results } = await search({ data: { q } }).catch(() => ({ results: [] as Result[] }));
     patch(id, { results, loading: false });

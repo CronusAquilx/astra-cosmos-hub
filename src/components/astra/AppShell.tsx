@@ -1,7 +1,8 @@
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import { Link, useNavigate, useParams, useRouter, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { Brain, Film, Gamepad2, Globe, LogOut, Shield, Menu, MessageSquare, Plus, Search, Settings, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, Brain, Film, Gamepad2, Globe, Home, Lock, LogOut, Maximize, Shield, Menu, MessageSquare, Plus, RotateCw, Search, Settings, Trash2 } from "lucide-react";
+import { usePrefs } from "@/lib/astra/prefs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -45,12 +46,34 @@ export function AppShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [navigate]);
 
+  const prefs = usePrefs();
+  useEffect(() => {
+    const onPanic = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (prefs.panicKey && e.key === prefs.panicKey) window.location.href = prefs.panicUrl;
+    };
+    window.addEventListener("keydown", onPanic);
+    return () => window.removeEventListener("keydown", onPanic);
+  }, [prefs.panicKey, prefs.panicUrl]);
+  useEffect(() => {
+    if (!prefs.tabCloak) return;
+    const t = setInterval(() => { if (document.title !== prefs.cloakTitle) document.title = prefs.cloakTitle; }, 500);
+    return () => clearInterval(t);
+  }, [prefs.tabCloak, prefs.cloakTitle]);
+
+  const launcher = prefs.layout === "launcher";
+
   return (
     <ShellCtx.Provider value={{ openMenu: () => setMobileOpen(true), openCommand: () => setCmdOpen(true) }}>
       <div className="flex h-dvh overflow-hidden bg-background">
-        <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar md:flex">
-          <SidebarBody onNavigate={() => {}} onSearch={() => setCmdOpen(true)} />
-        </aside>
+        {launcher ? (
+          <IconRail onSearch={() => setCmdOpen(true)} />
+        ) : (
+          <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar md:flex">
+            <SidebarBody onNavigate={() => {}} onSearch={() => setCmdOpen(true)} />
+          </aside>
+        )}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetContent side="left" className="w-[82vw] max-w-72 border-sidebar-border bg-sidebar p-0">
             <SheetTitle className="sr-only">Menu</SheetTitle>
@@ -63,10 +86,69 @@ export function AppShell({ children }: { children: ReactNode }) {
             />
           </SheetContent>
         </Sheet>
-        <main className="flex min-w-0 flex-1 flex-col">{children}</main>
+        <main className="flex min-w-0 flex-1 flex-col">
+          {launcher && <TopBar />}
+          <div className="min-h-0 flex-1">{children}</div>
+        </main>
       </div>
       <CommandMenu open={cmdOpen} onOpenChange={setCmdOpen} />
     </ShellCtx.Provider>
+  );
+}
+
+const RAIL = [
+  { to: "/home", label: "Home", icon: Home },
+  { to: "/chat", label: "AI", icon: Bot },
+  { to: "/web", label: "Web", icon: Globe },
+  { to: "/movies", label: "Movies", icon: Film },
+  { to: "/games", label: "Games", icon: Gamepad2 },
+] as const;
+
+function IconRail({ onSearch }: { onSearch: () => void }) {
+  const railLink = "flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-sidebar-accent hover:text-foreground";
+  const active = { className: "bg-sidebar-accent text-star" };
+  return (
+    <aside className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-sidebar-border bg-sidebar py-3 md:flex">
+      {RAIL.map((r) => (
+        <Link key={r.to} to={r.to} title={r.label} aria-label={r.label} className={railLink} activeProps={active}>
+          <r.icon className="size-4" />
+        </Link>
+      ))}
+      <button onClick={onSearch} title="Search" aria-label="Search" className={railLink}><Search className="size-4" /></button>
+      <div className="mt-auto flex flex-col items-center gap-1 border-t border-sidebar-border pt-2">
+        <Link to="/memory" title="Memory" aria-label="Memory" className={railLink} activeProps={active}><Brain className="size-4" /></Link>
+        <Link to="/settings" title="Settings" aria-label="Settings" className={railLink} activeProps={active}><Settings className="size-4" /></Link>
+        <button onClick={() => supabase.auth.signOut()} title="Sign out" aria-label="Sign out" className={railLink}><LogOut className="size-4" /></button>
+      </div>
+    </aside>
+  );
+}
+
+function TopBar() {
+  const navigate = useNavigate();
+  const router = useRouter();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const [q, setQ] = useState("");
+  const btn = "rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground";
+  return (
+    <div className="flex h-11 shrink-0 items-center gap-1 border-b bg-sidebar/80 px-2 backdrop-blur">
+      <MobileMenuButton />
+      <button className={btn} aria-label="Back" onClick={() => router.history.back()}><ArrowLeft className="size-4" /></button>
+      <button className={btn} aria-label="Forward" onClick={() => router.history.forward()}><ArrowRight className="size-4" /></button>
+      <button className={btn} aria-label="Reload" onClick={() => router.invalidate()}><RotateCw className="size-4" /></button>
+      <form
+        className="mx-1 flex min-w-0 flex-1 items-center gap-2 rounded-md border bg-background/60 px-3 py-1"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (q.trim()) navigate({ to: "/web", search: { q: q.trim() } });
+          setQ("");
+        }}
+      >
+        <Lock className="size-3 text-success" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`astra:/${path}`} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-foreground/80" />
+      </form>
+      <button className={btn} aria-label="Fullscreen" onClick={() => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen())}><Maximize className="size-4" /></button>
+    </div>
   );
 }
 
@@ -115,6 +197,7 @@ function SidebarBody({ onNavigate, onSearch }: { onNavigate: () => void; onSearc
         </button>
       </div>
       <div className="mt-4 space-y-0.5 px-2">
+        <Link to="/home" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Home className="size-4" /> Home</Link>
         <Link to="/web" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Globe className="size-4" /> Web</Link>
         <Link to="/movies" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Film className="size-4" /> Movies</Link>
         <Link to="/games" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Gamepad2 className="size-4" /> Games</Link>
