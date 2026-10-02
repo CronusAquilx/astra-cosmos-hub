@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedGamesRouteImport } from './routes/_authenticated/games'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedMemoryRouteImport } from './routes/_authenticated/memory'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedWebRouteImport } from './routes/_authenticated/web'
@@ -51,6 +52,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 const AuthenticatedGamesRoute = AuthenticatedGamesRouteImport.update({
   id: '/games',
   path: '/games',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMemoryRoute = AuthenticatedMemoryRouteImport.update({
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/games': typeof AuthenticatedGamesRoute
+  '/home': typeof AuthenticatedHomeRoute
   '/memory': typeof AuthenticatedMemoryRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/web': typeof AuthenticatedWebRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/games': typeof AuthenticatedGamesRoute
+  '/home': typeof AuthenticatedHomeRoute
   '/memory': typeof AuthenticatedMemoryRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/web': typeof AuthenticatedWebRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/games': typeof AuthenticatedGamesRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/memory': typeof AuthenticatedMemoryRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/web': typeof AuthenticatedWebRoute
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin'
     | '/games'
+    | '/home'
     | '/memory'
     | '/settings'
     | '/web'
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin'
     | '/games'
+    | '/home'
     | '/memory'
     | '/settings'
     | '/web'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/admin'
     | '/_authenticated/games'
+    | '/_authenticated/home'
     | '/_authenticated/memory'
     | '/_authenticated/settings'
     | '/_authenticated/web'
@@ -301,6 +313,13 @@ declare module '@tanstack/react-router' {
       path: '/games'
       fullPath: '/games'
       preLoaderRoute: typeof AuthenticatedGamesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/memory': {
@@ -407,6 +426,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedGamesRoute: typeof AuthenticatedGamesRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMemoryRoute: typeof AuthenticatedMemoryRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedWebRoute: typeof AuthenticatedWebRoute
@@ -423,6 +443,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedGamesRoute: AuthenticatedGamesRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMemoryRoute: AuthenticatedMemoryRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedWebRoute: AuthenticatedWebRoute,
