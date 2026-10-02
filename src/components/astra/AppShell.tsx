@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { Brain, LogOut, Shield, Menu, MessageSquare, Plus, Search, Settings, Trash2 } from "lucide-react";
+import { Brain, Film, Gamepad2, Globe, LogOut, Shield, Menu, MessageSquare, Plus, Search, Settings, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -114,7 +114,12 @@ function SidebarBody({ onNavigate, onSearch }: { onNavigate: () => void; onSearc
           <kbd className="ml-auto label-mono">⌘K</kbd>
         </button>
       </div>
-      <div className="mt-5 px-4 label-mono">Chats</div>
+      <div className="mt-4 space-y-0.5 px-2">
+        <Link to="/web" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Globe className="size-4" /> Web</Link>
+        <Link to="/movies" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Film className="size-4" /> Movies</Link>
+        <Link to="/games" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Gamepad2 className="size-4" /> Games</Link>
+      </div>
+      <div className="mt-5 px-4 label-mono">AI Chats</div>
       <nav className="mt-1 flex-1 overflow-y-auto px-2 pb-2">
         {threads?.length === 0 && <p className="px-3 py-2 text-sm text-muted-foreground">No chats yet.</p>}
         {threads?.map((t) => (
