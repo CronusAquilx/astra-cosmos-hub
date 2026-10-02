@@ -6,10 +6,32 @@ type Controller = import("@mercuryworkshop/scramjet-controller").Controller;
 type Frame = import("@mercuryworkshop/scramjet-controller").Frame;
 
 let cache: { key: string; promise: Promise<Controller> } | null = null;
+let scriptsPromise: Promise<void> | null = null;
+
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(s);
+  });
+}
+
+function loadProxyScripts(): Promise<void> {
+  scriptsPromise ??= (async () => {
+    await loadScript("/scramjet/scramjet.js");
+    await loadScript("/scramjet/controller.api.js");
+  })();
+  return scriptsPromise;
+}
 
 async function buildController(transport: Prefs["transport"], wisp: string): Promise<Controller> {
-  const [{ Controller }, { default: EpoxyTransport }, { default: LibcurlClient }] = await Promise.all([
-    import("@mercuryworkshop/scramjet-controller"),
+  await loadProxyScripts();
+  const { Controller } = (globalThis as Record<string, any>)["$scramjetController"] as {
+    Controller: new (init: any) => Controller;
+  };
+  const [{ default: EpoxyTransport }, { default: LibcurlClient }] = await Promise.all([
     import("@mercuryworkshop/epoxy-transport"),
     import("@mercuryworkshop/libcurl-transport"),
   ]);
