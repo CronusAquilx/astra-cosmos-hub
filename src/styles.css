@@ -188,3 +188,9 @@
 .astra-prose blockquote { border-left: 2px solid var(--star); padding-left: 0.9em; color: var(--muted-foreground); }
 .astra-prose table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
 .astra-prose th, .astra-prose td { border: 1px solid var(--border); padding: 0.4em 0.6em; text-align: left; }
+
+html[data-bg="dots"] main { background-image: radial-gradient(color-mix(in oklab, var(--foreground) 9%, transparent) 1px, transparent 1px); background-size: 22px 22px; }
+html[data-bg="grid"] main { background-image: linear-gradient(color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px); background-size: 32px 32px; }
+html[data-bg="glow"] main { background-image: radial-gradient(ellipse 60% 40% at 50% 0%, color-mix(in oklab, var(--star) 18%, transparent), transparent 70%); }
+html.reduce-motion *, html.reduce-motion *::before, html.reduce-motion *::after { animation: none !important; transition: none !important; }
+.title-glow { text-shadow: 0 0 40px color-mix(in oklab, var(--star) 55%, transparent); }
