@@ -20,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/movies/")({
 
 function Movies() {
   const [q, setQ] = useState("");
+  const [recents, setRecents] = useState<string[]>([]);
   const trending = useTrending();
   const popular = usePopular();
   const nowPlaying = useNowPlaying();
@@ -29,6 +30,27 @@ function Movies() {
   const kdrama = useKDrama();
   const results = useSearch(q.trim());
   const watchlist = useWatchlist();
+
+  useEffect(() => {
+    try {
+      setRecents(JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"));
+    } catch {
+      setRecents([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    const term = q.trim();
+    if (term.length < 3) return;
+    const timer = setTimeout(() => {
+      setRecents((prev) => {
+        const next = [term, ...prev.filter((x) => x.toLowerCase() !== term.toLowerCase())].slice(0, 8);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+        return next;
+      });
+    }, 900);
+    return () => clearTimeout(timer);
+  }, [q]);
 
   return (
     <div className="h-full overflow-y-auto">
@@ -46,6 +68,20 @@ function Movies() {
         </div>
       ) : (
         <>
+          {recents.length > 0 && (
+            <div className="flex items-center gap-1.5 overflow-x-auto px-4 pt-3 pb-1 sm:px-6">
+              <Clock className="size-3.5 shrink-0 text-muted-foreground" />
+              {recents.map((term) => (
+                <button
+                  key={term}
+                  onClick={() => setQ(term)}
+                  className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          )}
           <HeroBanner movies={trending.data} />
           <div className="relative z-10 -mt-12 space-y-1 pb-10 sm:-mt-16">
             <ChannelsRow />
