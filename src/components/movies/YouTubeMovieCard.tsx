@@ -12,9 +12,9 @@ interface Props {
 
 export default function YouTubeMovieCard({ title, year, videoId, poster, source = 'youtube', index = 0 }: Props) {
   return (
-    <div className="relative group w-[160px] sm:w-[180px] flex-shrink-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="group relative w-[42vw] max-w-[190px] min-w-[154px] shrink-0 snap-start animate-in fade-in slide-in-from-bottom-2 duration-300 sm:w-[180px] lg:w-[190px]">
       <Link to="/movies/free/$videoId" params={{ videoId }} search={{ source }}>
-        <div className="relative aspect-[2/3] rounded-lg overflow-hidden border border-border bg-card">
+        <div className="relative aspect-[2/3] overflow-hidden rounded-md border border-border bg-card">
           <img
             src={poster}
             alt={title}

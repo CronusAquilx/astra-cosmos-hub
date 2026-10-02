@@ -30,7 +30,7 @@ function Movies() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-border bg-background/80 px-3 backdrop-blur">
+      <header className="sticky top-0 z-20 grid h-16 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-border bg-background/90 px-3 backdrop-blur sm:px-6">
         <MobileMenuButton />
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -45,7 +45,7 @@ function Movies() {
       ) : (
         <>
           <HeroBanner movies={trending.data} />
-          <div className="relative z-10 -mt-16 space-y-2 pb-10">
+          <div className="relative z-10 -mt-12 space-y-1 pb-10 sm:-mt-16">
             <ChannelsRow />
             {!!watchlist.data?.length && (
               <ContentRow title="My List" movies={watchlist.data.map((w) => ({ id: w.tmdb_id, title: w.title ?? "", poster_path: w.poster_path, backdrop_path: null, overview: "", vote_average: 0, genre_ids: [], popularity: 0, media_type: w.media_type }))} />

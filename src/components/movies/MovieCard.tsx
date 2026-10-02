@@ -23,19 +23,11 @@ export default function MovieCard({ movie, index = 0, showRank, compact }: Props
   if (showRank && rank <= 10) {
     return (
       <div className="relative flex items-end shrink-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <span
-          className="font-serif select-none leading-none pointer-events-none pr-1"
-          style={{
-            fontSize: compact ? '96px' : '140px',
-            WebkitTextStroke: '2px hsl(var(--foreground) / 0.55)',
-            color: 'transparent',
-            marginRight: compact ? '-18px' : '-24px',
-          }}
-        >
+        <span className={`${compact ? 'mr-[-18px] text-8xl' : 'mr-[-24px] text-[140px]'} pointer-events-none select-none pr-1 font-display leading-none text-transparent [-webkit-text-stroke:2px_var(--muted-foreground)]`}>
           {rank}
         </span>
-        <Link to="/movies/title/$type/$id" params={{ type, id: String(movie.id) }} className={`relative ${compact ? 'w-[110px]' : 'w-[140px] sm:w-[160px]'} group`}>
-          <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-border shadow-xl">
+        <Link to="/movies/title/$type/$id" params={{ type, id: String(movie.id) }} className={`group relative snap-start ${compact ? 'w-[130px]' : 'w-[42vw] max-w-[190px] min-w-[154px] sm:w-[180px] lg:w-[190px]'}`}>
+          <div className="relative aspect-[2/3] overflow-hidden rounded-md border border-border shadow-xl">
             <img
               src={img(movie.poster_path)}
               alt={title}
@@ -43,8 +35,8 @@ export default function MovieCard({ movie, index = 0, showRank, compact }: Props
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
             />
-            <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/85 via-black/40 to-transparent">
-              <p className="text-xs font-semibold text-white line-clamp-1">{title}</p>
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/70 to-transparent p-2">
+              <p className="line-clamp-1 text-xs font-semibold text-foreground">{title}</p>
             </div>
           </div>
         </Link>
@@ -53,9 +45,9 @@ export default function MovieCard({ movie, index = 0, showRank, compact }: Props
   }
 
   return (
-    <div className={`relative group ${compact ? 'w-[120px]' : 'w-[150px] sm:w-[170px]'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+    <div className={`group relative shrink-0 snap-start ${compact ? 'w-[130px]' : 'w-[42vw] max-w-[190px] min-w-[154px] sm:w-[180px] lg:w-[190px]'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
       <Link to="/movies/title/$type/$id" params={{ type, id: String(movie.id) }}>
-        <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-border shadow-lg transition-all duration-300 group-hover:scale-[1.03] group-hover:border-star/40">
+        <div className="relative aspect-[2/3] overflow-hidden rounded-md border border-border bg-card shadow-lg transition-all duration-300 group-hover:-translate-y-1 group-hover:border-star/40">
           <img
             src={img(movie.poster_path)}
             alt={title}
@@ -64,9 +56,9 @@ export default function MovieCard({ movie, index = 0, showRank, compact }: Props
             onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
           />
 
-          <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-black/90 via-black/55 to-transparent">
-            <p className="text-[13px] font-semibold text-white line-clamp-1 leading-tight">{title}</p>
-            <div className="flex items-center gap-2 text-[11px] text-white/70 mt-0.5">
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/80 to-transparent p-3 pt-10">
+            <p className="line-clamp-1 text-sm font-semibold leading-tight text-foreground">{title}</p>
+            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
               {year && <span>{year}</span>}
               {rating && rating !== '0.0' && (
                 <span className="flex items-center gap-0.5">
@@ -77,9 +69,9 @@ export default function MovieCard({ movie, index = 0, showRank, compact }: Props
             </div>
           </div>
 
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
-            <div className="w-11 h-11 rounded-full bg-white/95 flex items-center justify-center">
-              <Play className="text-black ml-0.5" size={18} fill="currentColor" />
+          <div className="absolute inset-0 flex items-center justify-center bg-background/30 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+              <Play className="ml-0.5" size={18} fill="currentColor" />
             </div>
           </div>
 
