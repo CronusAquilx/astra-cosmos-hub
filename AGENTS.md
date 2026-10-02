@@ -15,3 +15,4 @@
 - Chat streaming goes through the `/api/chat` server route with the user's bearer token; messages persist server-side per thread, and the client sends only the latest message.
 - Authenticated pages live under `src/routes/_authenticated/` with `ssr: false`, since the session lives in browser storage.
 - Agent tools are defined in `src/lib/astra/tools.server.ts` and gated by rows in the `tools` table (enabled flag), so tools are switched on/off by data.
+- The web proxy defaults to the Astra relay transport (`src/lib/astra/relay-transport.ts` → authenticated `/api/proxy` server route) so browsers only contact the app domain; Wisp transports (Epoxy/Libcurl) fall back to the relay when no Wisp server is reachable, because school/work networks block public Wisp hosts.
