@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/web")({
   head: () => ({ meta: [{ title: "Web — Astra" }] }),
-  validateSearch: (s: Record<string, unknown>): { q?: string } => (typeof s.q === "string" && s.q ? { q: s.q } : {}),
+  validateSearch: (s: Record<string, unknown>): { q?: string } => (typeof s["q"] === "string" && s["q"] ? { q: s["q"] } : {}),
   component: Web,
 });
 

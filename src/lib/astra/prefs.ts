@@ -88,8 +88,8 @@ function apply() {
     r.style.removeProperty("--star");
     r.style.removeProperty("--ring");
   }
-  r.dataset.bg = state.background;
-  r.dataset.density = state.density;
+  r.dataset["bg"] = state.background;
+  r.dataset["density"] = state.density;
   r.classList.toggle("reduce-motion", state.reduceMotion);
   document.title = state.tabCloak ? state.cloakTitle : document.title;
 }
