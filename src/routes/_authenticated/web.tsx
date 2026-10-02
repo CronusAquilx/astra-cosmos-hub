@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import { searchUrl, usePrefs } from "@/lib/astra/prefs";
+import { useEffect, useRef, useState } from "react";
+import { searchUrl, usePrefs, type Prefs } from "@/lib/astra/prefs";
+import { openProxied } from "@/lib/astra/proxy";
 import { ExternalLink, Globe, Plus, Search, X } from "lucide-react";
 import { webSearch } from "@/lib/astra/web.functions";
 import { MobileMenuButton } from "@/components/astra/AppShell";
