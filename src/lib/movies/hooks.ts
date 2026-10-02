@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { tmdb, MOCK_MOVIES, GENRES, type TMDBMovie, type TMDBDetail } from './tmdb';
+import { tmdb, MOCK_MOVIES, GENRES, type TMDBMovie, type TMDBDetail, type TMDBPerson } from './tmdb';
 
 const API_KEY = (import.meta.env['VITE_TMDB_API_KEY'] || '0ea74aa80d71c4dc484c0a58f26ea7b8').trim();
 
@@ -97,6 +97,20 @@ export const useMovieDetail = (id: number) =>
         return await tmdb.movieDetail(id);
       } catch {
         return buildFallbackDetail(id, 'movie');
+      }
+    },
+    enabled: id > 0,
+    staleTime: 1000 * 60 * 30,
+  });
+
+export const usePerson = (id: number) =>
+  useQuery({
+    queryKey: ['person', id],
+    queryFn: async () => {
+      try {
+        return await tmdb.person(id);
+      } catch {
+        return null;
       }
     },
     enabled: id > 0,

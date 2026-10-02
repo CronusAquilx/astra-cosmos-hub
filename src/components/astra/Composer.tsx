@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Paperclip, Square, X } from "lucide-react";
+import { ArrowUp, Loader2, Mic, Paperclip, Square, X } from "lucide-react";
 import { toast } from "sonner";
 import { ModelPicker } from "./ModelPicker";
 import { cn } from "@/lib/utils";
 import type { FileUIPart } from "ai";
 import { MAX_FILES, MAX_FILE_BYTES, readAttachment, type Attachment } from "@/lib/astra/files";
+import { recordWav, transcribeAudio } from "@/lib/astra/voice";
 
 type Props = {
   onSend: (text: string, images?: FileUIPart[]) => void;
@@ -23,6 +24,41 @@ export function Composer({ onSend, onStop, busy, modelId, reasoning, onModel, on
   const [reading, setReading] = useState(0);
   const ref = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const recorderRef = useRef<{ stop: () => Promise<File> } | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+
+  async function stopAndTranscribe() {
+    const recorder = recorderRef.current;
+    recorderRef.current = null;
+    setRecording(false);
+    if (!recorder) return;
+    setTranscribing(true);
+    try {
+      const file = await recorder.stop();
+      const transcript = await transcribeAudio(file);
+      if (transcript) setText((prev) => (prev ? `${prev} ${transcript}` : transcript));
+      else toast.error("Didn't catch any speech — try again");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Voice input failed");
+    } finally {
+      setTranscribing(false);
+    }
+  }
+
+  async function toggleMic() {
+    if (recording) {
+      await stopAndTranscribe();
+      return;
+    }
+    try {
+      const recorder = await recordWav();
+      recorderRef.current = recorder;
+      setRecording(true);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Microphone is unavailable");
+    }
+  }
 
   async function addFiles(list: FileList | null) {
     const picked = Array.from(list ?? []);
@@ -103,6 +139,22 @@ export function Composer({ onSend, onStop, busy, modelId, reasoning, onModel, on
         <button onClick={() => fileRef.current?.click()} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Attach files">
           <Paperclip className="size-4" />
         </button>
+        {transcribing ? (
+          <span className="flex items-center gap-1.5 rounded-md p-1.5 text-xs text-muted-foreground" aria-live="polite">
+            <Loader2 className="size-4 animate-spin text-star" /> Transcribing…
+          </span>
+        ) : (
+          <button
+            onClick={toggleMic}
+            className={cn(
+              "rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground",
+              recording && "bg-destructive/15 text-destructive hover:bg-destructive/20",
+            )}
+            aria-label={recording ? "Stop recording" : "Voice input"}
+          >
+            <Mic className={cn("size-4", recording && "animate-pulse")} />
+          </button>
+        )}
         <ModelPicker modelId={modelId} reasoning={reasoning} onModel={onModel} onReasoning={onReasoning} />
         <div className="flex-1" />
         {busy ? (

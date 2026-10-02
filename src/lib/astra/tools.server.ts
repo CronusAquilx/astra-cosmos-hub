@@ -120,6 +120,37 @@ const builders: Record<string, (ctx: Ctx) => ToolSet[string]> = {
       inputSchema: z.object({ title: z.string(), html: z.string() }),
       execute: async ({ title, html }) => ({ title, bytes: html.length, rendered: true }),
     }),
+  generate_image: ({ supabase, userId }) =>
+    tool({
+      description:
+        "Generate an image from a detailed visual description and show it to the user. Write a rich prompt covering subject, setting, style, lighting and composition. Never name real people, brands or copyrighted characters — describe them instead.",
+      inputSchema: z.object({ prompt: z.string() }),
+      execute: async ({ prompt }, { abortSignal }) => {
+        try {
+          const apiKey = process.env["LOVABLE_API_KEY"];
+          if (!apiKey) return { error: "Image generation isn't available right now." };
+          const { generateImagePng } = await import("./image.server");
+          const result = await generateImagePng(
+            { baseURL: "https://ai.gateway.lovable.dev", apiKey, model: "openai/gpt-image-2.5-sunburst" },
+            prompt,
+            abortSignal,
+          );
+          if (!result.ok) return { error: result.error };
+          const path = `${userId}/${crypto.randomUUID()}.png`;
+          const { error: upErr } = await supabase.storage
+            .from("astra-images")
+            .upload(path, result.bytes, { contentType: "image/png" });
+          if (upErr) {
+            console.error("save image", upErr);
+            return { error: "The image was created but couldn't be saved." };
+          }
+          const { data: signed } = await supabase.storage.from("astra-images").createSignedUrl(path, 60 * 60 * 24 * 365);
+          return signed ? { prompt, url: signed.signedUrl } : { error: "The image was created but couldn't be saved." };
+        } catch (e) {
+          return { error: e instanceof Error && e.name === "AbortError" ? "Cancelled" : "Image generation failed" };
+        }
+      },
+    }),
 };
 
 export async function buildTools(ctx: Ctx): Promise<ToolSet> {

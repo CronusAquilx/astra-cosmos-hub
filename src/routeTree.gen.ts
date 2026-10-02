@@ -24,6 +24,7 @@ import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
 import { Route as AuthenticatedMoviesIndexRouteImport } from './routes/_authenticated/movies.index'
 import { Route as AuthenticatedMoviesFreeVideoIdRouteImport } from './routes/_authenticated/movies.free.$videoId'
+import { Route as AuthenticatedMoviesPersonIdRouteImport } from './routes/_authenticated/movies.person.$id'
 import { Route as AuthenticatedMoviesProviderSlugRouteImport } from './routes/_authenticated/movies.provider.$slug'
 import { Route as AuthenticatedMoviesTitleTypeIdRouteImport } from './routes/_authenticated/movies.title.$type.$id'
 import { Route as AuthenticatedMoviesWatchTypeIdRouteImport } from './routes/_authenticated/movies.watch.$type.$id'
@@ -105,6 +106,12 @@ const AuthenticatedMoviesFreeVideoIdRoute =
     path: '/movies/free/$videoId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMoviesPersonIdRoute =
+  AuthenticatedMoviesPersonIdRouteImport.update({
+    id: '/movies/person/$id',
+    path: '/movies/person/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMoviesProviderSlugRoute =
   AuthenticatedMoviesProviderSlugRouteImport.update({
     id: '/movies/provider/$slug',
@@ -139,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/chat/': typeof AuthenticatedChatIndexRoute
   '/movies/': typeof AuthenticatedMoviesIndexRoute
   '/movies/free/$videoId': typeof AuthenticatedMoviesFreeVideoIdRoute
+  '/movies/person/$id': typeof AuthenticatedMoviesPersonIdRoute
   '/movies/provider/$slug': typeof AuthenticatedMoviesProviderSlugRoute
   '/movies/title/$type/$id': typeof AuthenticatedMoviesTitleTypeIdRoute
   '/movies/watch/$type/$id': typeof AuthenticatedMoviesWatchTypeIdRoute
@@ -158,6 +166,7 @@ export interface FileRoutesByTo {
   '/chat': typeof AuthenticatedChatIndexRoute
   '/movies': typeof AuthenticatedMoviesIndexRoute
   '/movies/free/$videoId': typeof AuthenticatedMoviesFreeVideoIdRoute
+  '/movies/person/$id': typeof AuthenticatedMoviesPersonIdRoute
   '/movies/provider/$slug': typeof AuthenticatedMoviesProviderSlugRoute
   '/movies/title/$type/$id': typeof AuthenticatedMoviesTitleTypeIdRoute
   '/movies/watch/$type/$id': typeof AuthenticatedMoviesWatchTypeIdRoute
@@ -179,6 +188,7 @@ export interface FileRoutesById {
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/movies/': typeof AuthenticatedMoviesIndexRoute
   '/_authenticated/movies/free/$videoId': typeof AuthenticatedMoviesFreeVideoIdRoute
+  '/_authenticated/movies/person/$id': typeof AuthenticatedMoviesPersonIdRoute
   '/_authenticated/movies/provider/$slug': typeof AuthenticatedMoviesProviderSlugRoute
   '/_authenticated/movies/title/$type/$id': typeof AuthenticatedMoviesTitleTypeIdRoute
   '/_authenticated/movies/watch/$type/$id': typeof AuthenticatedMoviesWatchTypeIdRoute
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/chat/'
     | '/movies/'
     | '/movies/free/$videoId'
+    | '/movies/person/$id'
     | '/movies/provider/$slug'
     | '/movies/title/$type/$id'
     | '/movies/watch/$type/$id'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/movies'
     | '/movies/free/$videoId'
+    | '/movies/person/$id'
     | '/movies/provider/$slug'
     | '/movies/title/$type/$id'
     | '/movies/watch/$type/$id'
@@ -239,6 +251,7 @@ export interface FileRouteTypes {
     | '/_authenticated/chat/'
     | '/_authenticated/movies/'
     | '/_authenticated/movies/free/$videoId'
+    | '/_authenticated/movies/person/$id'
     | '/_authenticated/movies/provider/$slug'
     | '/_authenticated/movies/title/$type/$id'
     | '/_authenticated/movies/watch/$type/$id'
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMoviesFreeVideoIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/movies/person/$id': {
+      id: '/_authenticated/movies/person/$id'
+      path: '/movies/person/$id'
+      fullPath: '/movies/person/$id'
+      preLoaderRoute: typeof AuthenticatedMoviesPersonIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/movies/provider/$slug': {
       id: '/_authenticated/movies/provider/$slug'
       path: '/movies/provider/$slug'
@@ -394,6 +414,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
   AuthenticatedMoviesIndexRoute: typeof AuthenticatedMoviesIndexRoute
   AuthenticatedMoviesFreeVideoIdRoute: typeof AuthenticatedMoviesFreeVideoIdRoute
+  AuthenticatedMoviesPersonIdRoute: typeof AuthenticatedMoviesPersonIdRoute
   AuthenticatedMoviesProviderSlugRoute: typeof AuthenticatedMoviesProviderSlugRoute
   AuthenticatedMoviesTitleTypeIdRoute: typeof AuthenticatedMoviesTitleTypeIdRoute
   AuthenticatedMoviesWatchTypeIdRoute: typeof AuthenticatedMoviesWatchTypeIdRoute
@@ -409,6 +430,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
   AuthenticatedMoviesIndexRoute: AuthenticatedMoviesIndexRoute,
   AuthenticatedMoviesFreeVideoIdRoute: AuthenticatedMoviesFreeVideoIdRoute,
+  AuthenticatedMoviesPersonIdRoute: AuthenticatedMoviesPersonIdRoute,
   AuthenticatedMoviesProviderSlugRoute: AuthenticatedMoviesProviderSlugRoute,
   AuthenticatedMoviesTitleTypeIdRoute: AuthenticatedMoviesTitleTypeIdRoute,
   AuthenticatedMoviesWatchTypeIdRoute: AuthenticatedMoviesWatchTypeIdRoute,

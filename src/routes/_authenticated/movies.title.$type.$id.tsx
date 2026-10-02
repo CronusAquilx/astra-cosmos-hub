@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Play, Plus } from "lucide-react";
+import { ArrowLeft, Check, Play, Plus, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import ContentRow from "@/components/movies/ContentRow";
 import { useMovieDetail, useTVDetail } from "@/lib/movies/hooks";
 import { backdrop, img } from "@/lib/movies/tmdb";
@@ -44,6 +45,24 @@ function Detail() {
               >
                 {saved ? <Check className="size-4" /> : <Plus className="size-4" />} My List
               </button>
+              <button
+                onClick={async () => {
+                  const url = window.location.href;
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({ title, url });
+                    } catch {
+                      /* user dismissed */
+                    }
+                  } else {
+                    await navigator.clipboard.writeText(url);
+                    toast.success("Link copied");
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-background/60 px-4 py-2 text-sm"
+              >
+                <Share2 className="size-4" /> Share
+              </button>
             </div>
           </div>
         </div>
@@ -52,7 +71,20 @@ function Detail() {
         {d.tagline && <p className="italic text-muted-foreground">{d.tagline}</p>}
         <p className="leading-relaxed">{d.overview}</p>
         <div className="flex flex-wrap gap-1.5">{d.genres?.map((g) => <span key={g.id} className="rounded-full border border-border px-2.5 py-0.5 text-xs">{g.name}</span>)}</div>
-        {!!d.credits?.cast.length && <p className="text-sm text-muted-foreground">Cast: {d.credits.cast.slice(0, 8).map((c) => c.name).join(", ")}</p>}
+        {!!d.credits?.cast.length && (
+          <div className="flex flex-wrap gap-1.5">
+            {d.credits.cast.slice(0, 8).map((c) => (
+              <Link
+                key={c.id}
+                to="/movies/person/$id"
+                params={{ id: String(c.id) }}
+                className="rounded-full border border-border px-2.5 py-1 text-xs hover:bg-accent"
+              >
+                {c.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
       <div className="pb-10"><ContentRow title="More like this" movies={(d.recommendations?.results.length ? d.recommendations.results : d.similar?.results)?.map((m) => ({ ...m, media_type: m.media_type ?? type }))} /></div>
     </div>
