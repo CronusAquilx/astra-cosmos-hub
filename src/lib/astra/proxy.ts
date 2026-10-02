@@ -49,7 +49,7 @@ async function buildController(transport: Prefs["transport"], wisp: string): Pro
     import("@mercuryworkshop/libcurl-transport"),
   ]);
 
-  const reg = await navigator.serviceWorker.register("/scramjet/controller.sw.js", { scope: "/scramjet/p/" });
+  const reg = await navigator.serviceWorker.register("/scramjet/sw.js", { scope: "/scramjet/p/" });
   const sw = await waitForActive(reg);
 
   const t = transport === "libcurl" ? new LibcurlClient({ wisp }) : new EpoxyTransport({ wisp });
