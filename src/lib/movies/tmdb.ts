@@ -55,6 +55,17 @@ export interface TMDBDetail extends TMDBMovie {
   recommendations?: { results: TMDBMovie[] };
 }
 
+export interface TMDBPerson {
+  id: number;
+  name: string;
+  biography?: string;
+  birthday?: string | null;
+  place_of_birth?: string | null;
+  profile_path: string | null;
+  known_for_department?: string;
+  combined_credits?: { cast: TMDBMovie[]; crew: TMDBMovie[] };
+}
+
 async function fetchTMDB<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   if (!API_KEY) throw new Error('TMDB API key not configured');
   const url = new URL(`${BASE}${endpoint}`);
@@ -92,6 +103,9 @@ export const tmdb = {
 
   tvDetail: (id: number) =>
     fetchTMDB<TMDBDetail>(`/tv/${id}`, { append_to_response: 'credits,videos,similar,recommendations' }),
+
+  person: (id: number) =>
+    fetchTMDB<TMDBPerson>(`/person/${id}`, { append_to_response: 'combined_credits' }),
 
   search: (query: string, page = '1') =>
     fetchTMDB<{ results: TMDBMovie[] }>('/search/multi', { query, page }).then(r => r.results),
