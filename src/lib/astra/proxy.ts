@@ -1,6 +1,25 @@
 import type { Prefs } from "./prefs";
 
 export const DEFAULT_WISP = "wss://wisp.mercurywork.shop/";
+export const WISP_FALLBACKS = [DEFAULT_WISP, "wss://anura.pro/", "wss://definitelyscience.com/wisp/"];
+
+function probe(url: string, ms = 5000): Promise<boolean> {
+  return new Promise((resolve) => {
+    let ws: WebSocket;
+    try { ws = new WebSocket(url); } catch { return resolve(false); }
+    const t = setTimeout(() => { try { ws.close(); } catch {} resolve(false); }, ms);
+    ws.onopen = () => { clearTimeout(t); ws.close(); resolve(true); };
+    ws.onerror = () => { clearTimeout(t); resolve(false); };
+  });
+}
+
+async function pickWisp(custom: string): Promise<string> {
+  const list = custom ? [custom, ...WISP_FALLBACKS] : WISP_FALLBACKS;
+  const results = await Promise.all(list.map((u) => probe(u)));
+  const i = results.findIndex(Boolean);
+  if (i < 0) throw new Error("No Wisp server reachable from this network");
+  return list[i]!;
+}
 
 type Controller = import("@mercuryworkshop/scramjet-controller").Controller;
 type Frame = import("@mercuryworkshop/scramjet-controller").Frame;
@@ -39,8 +58,8 @@ function waitForActive(reg: ServiceWorkerRegistration): Promise<ServiceWorker> {
   });
 }
 
-async function buildController(transport: Prefs["transport"], wisp: string): Promise<Controller> {
-  await loadProxyScripts();
+async function buildController(transport: Prefs["transport"], custom: string): Promise<Controller> {
+  const [wisp] = await Promise.all([pickWisp(custom), loadProxyScripts()]);
   const { Controller } = (globalThis as Record<string, any>)["$scramjetController"] as {
     Controller: new (init: any) => Controller;
   };
@@ -68,9 +87,9 @@ async function buildController(transport: Prefs["transport"], wisp: string): Pro
 }
 
 export function getProxyController(prefs: Prefs): Promise<Controller> {
-  const key = `${prefs.transport}|${prefs.wisp || DEFAULT_WISP}`;
+  const key = `${prefs.transport}|${prefs.wisp}`;
   if (!cache || cache.key !== key) {
-    cache = { key, promise: buildController(prefs.transport, prefs.wisp || DEFAULT_WISP) };
+    cache = { key, promise: buildController(prefs.transport, prefs.wisp.trim()) };
     cache.promise.catch(() => { if (cache?.key === key) cache = null; });
   }
   return cache.promise;
