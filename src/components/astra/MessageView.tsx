@@ -24,7 +24,50 @@ const TOOL_LABELS: Record<string, string> = {
   url_fetch: "Read a page",
   remember: "Saved to memory",
   html_preview: "Built a page",
+  generate_image: "Generated an image",
 };
+
+function SpeakButton({ text }: { text: string }) {
+  const [playing, setPlaying] = useState(false);
+  const ctrlRef = useRef<AbortController | null>(null);
+  const spoken = text.slice(0, 4000);
+  async function toggle() {
+    if (playing) {
+      ctrlRef.current?.abort();
+      ctrlRef.current = null;
+      setPlaying(false);
+      return;
+    }
+    const ctrl = new AbortController();
+    ctrlRef.current = ctrl;
+    setPlaying(true);
+    try {
+      await streamSpeech("/api/speech", spoken, ctrl.signal);
+    } catch (e) {
+      const aborted = e instanceof Error && (e.name === "AbortError" || e.name === "TimeoutError");
+      if (!aborted) toast.error("Couldn't play that reply. Tap to try again.");
+    } finally {
+      if (ctrlRef.current === ctrl) {
+        ctrlRef.current = null;
+        setPlaying(false);
+      }
+    }
+  }
+  if (!spoken.trim()) return null;
+  return (
+    <button
+      onClick={toggle}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground",
+        playing && "border-star/60 text-star",
+      )}
+      aria-label={playing ? "Stop reading aloud" : "Read aloud"}
+    >
+      {playing ? <Square className="size-3 fill-current" /> : <Volume2 className="size-3.5" />}
+      {playing ? "Stop" : "Listen"}
+    </button>
+  );
+}
 
 function CodeBlock({ children }: { children?: ReactNode }) {
   const [copied, setCopied] = useState(false);
@@ -127,6 +170,39 @@ function ToolView({ part }: { part: ToolPart }) {
     return <HtmlPreview title={String(part.input["title"] ?? "Preview")} html={String(part.input["html"])} />;
   }
 
+  if (name === "generate_image" && !running) {
+    const url = typeof out?.["url"] === "string" ? out["url"] : null;
+    const prompt = String(part.input?.["prompt"] ?? "Image");
+    if (url) {
+      return (
+        <div>
+          <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+            <Check className="size-3.5 text-success" />
+            <span>{TOOL_LABELS[name]} · {prompt.length > 60 ? `${prompt.slice(0, 60)}…` : prompt}</span>
+            <ChevronRight className={cn("size-3.5 transition-transform", open && "rotate-90")} />
+          </button>
+          <div className="mt-2 w-fit max-w-sm overflow-hidden rounded-lg border">
+            <img src={url} alt={prompt} className="block max-w-full" loading="lazy" />
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              download
+              className="flex items-center justify-center gap-1.5 border-t py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              <Download className="size-3" /> Download
+            </a>
+          </div>
+          {open && (
+            <pre className="mt-2 max-h-64 overflow-auto rounded-md border bg-card p-3 font-mono text-xs text-muted-foreground">
+              {JSON.stringify({ prompt, url }, null, 2)}
+            </pre>
+          )}
+        </div>
+      );
+    }
+  }
+
   const results = name === "web_search" ? ((out?.["results"] as { title: string; url: string }[] | undefined) ?? []) : [];
 
   return (
@@ -198,6 +274,9 @@ export function MessageView({ message }: { message: UIMessage }) {
           if (p.type.startsWith("tool-")) return <ToolView key={i} part={p as unknown as ToolPart} />;
           return null;
         })}
+        {message.parts.some((p) => p.type === "text" && p.text.trim()) && (
+          <SpeakButton text={message.parts.filter((p) => p.type === "text").map((p) => p.text).join(" ")} />
+        )}
       </div>
     </div>
   );
