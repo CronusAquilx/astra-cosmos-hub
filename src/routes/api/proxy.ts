@@ -42,7 +42,7 @@ async function handle(request: Request) {
     if (typeof k !== "string" || typeof v !== "string" || DROP_REQ.has(k.toLowerCase())) continue;
     try { headers.append(k, v); } catch { /* invalid header */ }
   }
-  const body = method === "GET" || method === "HEAD" ? undefined : await request.arrayBuffer();
+  const body = method === "GET" || method === "HEAD" ? null : await request.arrayBuffer();
 
   let upstream: Response;
   try {

@@ -14,7 +14,7 @@ export class AstraRelayTransport {
   async request(remote: URL, method: string, body: BodyInit | null, headers: RawHeaders, signal: AbortSignal | undefined) {
     const { data } = await supabase.auth.getSession();
     const token = data.session?.access_token ?? "";
-    const payload = body == null || method === "GET" || method === "HEAD" ? undefined : await new Response(body).arrayBuffer();
+    const payload = body == null || method === "GET" || method === "HEAD" ? null : await new Response(body).arrayBuffer();
     const res = await fetch("/api/proxy", {
       method: "POST",
       signal,
