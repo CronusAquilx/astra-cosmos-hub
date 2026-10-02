@@ -10,33 +10,221 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedGamesRouteImport } from './routes/_authenticated/games'
+import { Route as AuthenticatedMemoryRouteImport } from './routes/_authenticated/memory'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedWebRouteImport } from './routes/_authenticated/web'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
+import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
+import { Route as AuthenticatedMoviesIndexRouteImport } from './routes/_authenticated/movies.index'
+import { Route as AuthenticatedMoviesFreeVideoIdRouteImport } from './routes/_authenticated/movies.free.$videoId'
+import { Route as AuthenticatedMoviesProviderSlugRouteImport } from './routes/_authenticated/movies.provider.$slug'
+import { Route as AuthenticatedMoviesTitleTypeIdRouteImport } from './routes/_authenticated/movies.title.$type.$id'
+import { Route as AuthenticatedMoviesWatchTypeIdRouteImport } from './routes/_authenticated/movies.watch.$type.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedGamesRoute = AuthenticatedGamesRouteImport.update({
+  id: '/games',
+  path: '/games',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMemoryRoute = AuthenticatedMemoryRouteImport.update({
+  id: '/memory',
+  path: '/memory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWebRoute = AuthenticatedWebRouteImport.update({
+  id: '/web',
+  path: '/web',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedChatThreadIdRoute =
+  AuthenticatedChatThreadIdRouteImport.update({
+    id: '/chat/$threadId',
+    path: '/chat/$threadId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMoviesIndexRoute =
+  AuthenticatedMoviesIndexRouteImport.update({
+    id: '/movies/',
+    path: '/movies/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMoviesFreeVideoIdRoute =
+  AuthenticatedMoviesFreeVideoIdRouteImport.update({
+    id: '/movies/free/$videoId',
+    path: '/movies/free/$videoId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMoviesProviderSlugRoute =
+  AuthenticatedMoviesProviderSlugRouteImport.update({
+    id: '/movies/provider/$slug',
+    path: '/movies/provider/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMoviesTitleTypeIdRoute =
+  AuthenticatedMoviesTitleTypeIdRouteImport.update({
+    id: '/movies/title/$type/$id',
+    path: '/movies/title/$type/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMoviesWatchTypeIdRoute =
+  AuthenticatedMoviesWatchTypeIdRouteImport.update({
+    id: '/movies/watch/$type/$id',
+    path: '/movies/watch/$type/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/games': typeof AuthenticatedGamesRoute
+  '/memory': typeof AuthenticatedMemoryRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/web': typeof AuthenticatedWebRoute
+  '/api/chat': typeof ApiChatRoute
+  '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/chat/': typeof AuthenticatedChatIndexRoute
+  '/movies/': typeof AuthenticatedMoviesIndexRoute
+  '/movies/free/$videoId': typeof AuthenticatedMoviesFreeVideoIdRoute
+  '/movies/provider/$slug': typeof AuthenticatedMoviesProviderSlugRoute
+  '/movies/title/$type/$id': typeof AuthenticatedMoviesTitleTypeIdRoute
+  '/movies/watch/$type/$id': typeof AuthenticatedMoviesWatchTypeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/games': typeof AuthenticatedGamesRoute
+  '/memory': typeof AuthenticatedMemoryRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/web': typeof AuthenticatedWebRoute
+  '/api/chat': typeof ApiChatRoute
+  '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/chat': typeof AuthenticatedChatIndexRoute
+  '/movies': typeof AuthenticatedMoviesIndexRoute
+  '/movies/free/$videoId': typeof AuthenticatedMoviesFreeVideoIdRoute
+  '/movies/provider/$slug': typeof AuthenticatedMoviesProviderSlugRoute
+  '/movies/title/$type/$id': typeof AuthenticatedMoviesTitleTypeIdRoute
+  '/movies/watch/$type/$id': typeof AuthenticatedMoviesWatchTypeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/games': typeof AuthenticatedGamesRoute
+  '/_authenticated/memory': typeof AuthenticatedMemoryRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/web': typeof AuthenticatedWebRoute
+  '/api/chat': typeof ApiChatRoute
+  '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
+  '/_authenticated/movies/': typeof AuthenticatedMoviesIndexRoute
+  '/_authenticated/movies/free/$videoId': typeof AuthenticatedMoviesFreeVideoIdRoute
+  '/_authenticated/movies/provider/$slug': typeof AuthenticatedMoviesProviderSlugRoute
+  '/_authenticated/movies/title/$type/$id': typeof AuthenticatedMoviesTitleTypeIdRoute
+  '/_authenticated/movies/watch/$type/$id': typeof AuthenticatedMoviesWatchTypeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/games'
+    | '/memory'
+    | '/settings'
+    | '/web'
+    | '/api/chat'
+    | '/chat/$threadId'
+    | '/chat/'
+    | '/movies/'
+    | '/movies/free/$videoId'
+    | '/movies/provider/$slug'
+    | '/movies/title/$type/$id'
+    | '/movies/watch/$type/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/games'
+    | '/memory'
+    | '/settings'
+    | '/web'
+    | '/api/chat'
+    | '/chat/$threadId'
+    | '/chat'
+    | '/movies'
+    | '/movies/free/$videoId'
+    | '/movies/provider/$slug'
+    | '/movies/title/$type/$id'
+    | '/movies/watch/$type/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/games'
+    | '/_authenticated/memory'
+    | '/_authenticated/settings'
+    | '/_authenticated/web'
+    | '/api/chat'
+    | '/_authenticated/chat/$threadId'
+    | '/_authenticated/chat/'
+    | '/_authenticated/movies/'
+    | '/_authenticated/movies/free/$videoId'
+    | '/_authenticated/movies/provider/$slug'
+    | '/_authenticated/movies/title/$type/$id'
+    | '/_authenticated/movies/watch/$type/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +236,152 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/games': {
+      id: '/_authenticated/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof AuthenticatedGamesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/memory': {
+      id: '/_authenticated/memory'
+      path: '/memory'
+      fullPath: '/memory'
+      preLoaderRoute: typeof AuthenticatedMemoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/web': {
+      id: '/_authenticated/web'
+      path: '/web'
+      fullPath: '/web'
+      preLoaderRoute: typeof AuthenticatedWebRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/chat/': {
+      id: '/_authenticated/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/chat/$threadId': {
+      id: '/_authenticated/chat/$threadId'
+      path: '/chat/$threadId'
+      fullPath: '/chat/$threadId'
+      preLoaderRoute: typeof AuthenticatedChatThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/movies/': {
+      id: '/_authenticated/movies/'
+      path: '/movies'
+      fullPath: '/movies/'
+      preLoaderRoute: typeof AuthenticatedMoviesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/movies/free/$videoId': {
+      id: '/_authenticated/movies/free/$videoId'
+      path: '/movies/free/$videoId'
+      fullPath: '/movies/free/$videoId'
+      preLoaderRoute: typeof AuthenticatedMoviesFreeVideoIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/movies/provider/$slug': {
+      id: '/_authenticated/movies/provider/$slug'
+      path: '/movies/provider/$slug'
+      fullPath: '/movies/provider/$slug'
+      preLoaderRoute: typeof AuthenticatedMoviesProviderSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/movies/title/$type/$id': {
+      id: '/_authenticated/movies/title/$type/$id'
+      path: '/movies/title/$type/$id'
+      fullPath: '/movies/title/$type/$id'
+      preLoaderRoute: typeof AuthenticatedMoviesTitleTypeIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/movies/watch/$type/$id': {
+      id: '/_authenticated/movies/watch/$type/$id'
+      path: '/movies/watch/$type/$id'
+      fullPath: '/movies/watch/$type/$id'
+      preLoaderRoute: typeof AuthenticatedMoviesWatchTypeIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedGamesRoute: typeof AuthenticatedGamesRoute
+  AuthenticatedMemoryRoute: typeof AuthenticatedMemoryRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedWebRoute: typeof AuthenticatedWebRoute
+  AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
+  AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
+  AuthenticatedMoviesIndexRoute: typeof AuthenticatedMoviesIndexRoute
+  AuthenticatedMoviesFreeVideoIdRoute: typeof AuthenticatedMoviesFreeVideoIdRoute
+  AuthenticatedMoviesProviderSlugRoute: typeof AuthenticatedMoviesProviderSlugRoute
+  AuthenticatedMoviesTitleTypeIdRoute: typeof AuthenticatedMoviesTitleTypeIdRoute
+  AuthenticatedMoviesWatchTypeIdRoute: typeof AuthenticatedMoviesWatchTypeIdRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedGamesRoute: AuthenticatedGamesRoute,
+  AuthenticatedMemoryRoute: AuthenticatedMemoryRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedWebRoute: AuthenticatedWebRoute,
+  AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
+  AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
+  AuthenticatedMoviesIndexRoute: AuthenticatedMoviesIndexRoute,
+  AuthenticatedMoviesFreeVideoIdRoute: AuthenticatedMoviesFreeVideoIdRoute,
+  AuthenticatedMoviesProviderSlugRoute: AuthenticatedMoviesProviderSlugRoute,
+  AuthenticatedMoviesTitleTypeIdRoute: AuthenticatedMoviesTitleTypeIdRoute,
+  AuthenticatedMoviesWatchTypeIdRoute: AuthenticatedMoviesWatchTypeIdRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
