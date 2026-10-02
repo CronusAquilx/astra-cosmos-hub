@@ -1,9 +1,11 @@
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { UIMessage } from "ai";
-import { Check, ChevronRight, Copy, ExternalLink, Loader2, Maximize2, X, AlertCircle } from "lucide-react";
+import { Check, ChevronRight, Copy, Download, ExternalLink, Loader2, Maximize2, Square, Volume2, X, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import { AstraMark } from "./Mark";
+import { streamSpeech } from "@/lib/astra/voice";
 import { cn } from "@/lib/utils";
 
 type ToolPart = {
