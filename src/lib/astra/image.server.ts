@@ -19,7 +19,8 @@ function generationBody(config: ImageConfig, prompt: string, stream: boolean) {
 }
 
 function requestImage(config: ImageConfig, prompt: string, stream: boolean, signal?: AbortSignal) {
-  return fetch(`${config.baseURL}/v1/images/generations`, {
+  const base = config.baseURL.replace(/\/+$/, "").replace(/\/v1$/, "");
+  return fetch(`${base}/v1/images/generations`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${config.apiKey}`,
