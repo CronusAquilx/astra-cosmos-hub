@@ -26,6 +26,19 @@ function loadProxyScripts(): Promise<void> {
   return scriptsPromise;
 }
 
+function waitForActive(reg: ServiceWorkerRegistration): Promise<ServiceWorker> {
+  if (reg.active) return Promise.resolve(reg.active);
+  const sw = reg.installing ?? reg.waiting;
+  if (!sw) return Promise.reject(new Error("Proxy worker failed to start"));
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("Proxy worker timed out")), 30000);
+    sw.addEventListener("statechange", () => {
+      if (sw.state === "activated") { clearTimeout(timer); resolve(sw); }
+      if (sw.state === "redundant") { clearTimeout(timer); reject(new Error("Proxy worker was rejected")); }
+    });
+  });
+}
+
 async function buildController(transport: Prefs["transport"], wisp: string): Promise<Controller> {
   await loadProxyScripts();
   const { Controller } = (globalThis as Record<string, any>)["$scramjetController"] as {
@@ -37,9 +50,7 @@ async function buildController(transport: Prefs["transport"], wisp: string): Pro
   ]);
 
   const reg = await navigator.serviceWorker.register("/scramjet/controller.sw.js", { scope: "/scramjet/p/" });
-  await navigator.serviceWorker.ready;
-  const sw = reg.active;
-  if (!sw) throw new Error("Proxy worker failed to start");
+  const sw = await waitForActive(reg);
 
   const t = transport === "libcurl" ? new LibcurlClient({ wisp }) : new EpoxyTransport({ wisp });
   await t.init();
