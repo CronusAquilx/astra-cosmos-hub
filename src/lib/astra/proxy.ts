@@ -109,6 +109,12 @@ export function getProxyController(prefs: Prefs): Promise<Controller> {
 
 export async function openProxied(iframe: HTMLIFrameElement, url: string, prefs: Prefs): Promise<Frame> {
   const controller = await getProxyController(prefs);
+  // Re-attach to the proxy worker each time: the browser stops idle workers,
+  // which wipes their routing table and makes proxied pages 404.
+  const c = controller as any;
+  c.guardServiceWorkerRevive = false;
+  try { c.setupMessagePort?.(); } catch { /* ignore */ }
+  await new Promise((r) => setTimeout(r, 150));
   const frame = controller.createFrame(iframe);
   frame.go(url);
   return frame;
