@@ -120,3 +120,27 @@ function Web() {
     </div>
   );
 }
+
+function ProxiedFrame({ url, title, prefs }: { url: string; title: string; prefs: Prefs }) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  useEffect(() => {
+    let cancelled = false;
+    setStatus("loading");
+    openProxied(ref.current!, url, prefs)
+      .then(() => { if (!cancelled) setStatus("ready"); })
+      .catch(() => { if (!cancelled) setStatus("error"); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, prefs.transport, prefs.wisp]);
+  return (
+    <div className="flex h-full flex-col">
+      <iframe ref={ref} title={title} className="w-full flex-1 bg-background" />
+      <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">
+        {status === "loading" && "Starting the proxy…"}
+        {status === "error" && "The proxy couldn't start — check the Wisp server in Settings → Proxy."}
+        {status === "ready" && `Proxied through ${prefs.transport === "libcurl" ? "Libcurl" : "Epoxy"}.`}
+      </p>
+    </div>
+  );
+}
