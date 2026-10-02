@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import YouTubeMovieCard from './YouTubeMovieCard';
+import { Button } from '@/components/ui/button';
 
 interface FreeMovie {
   title: string;
@@ -18,7 +19,8 @@ interface Props {
 export default function FreeContentRow({ title, movies }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scroll = (dir: 'left' | 'right') => {
-    scrollRef.current?.scrollBy({ left: dir === 'left' ? -400 : 400, behavior: 'smooth' });
+    const amount = Math.max(320, (scrollRef.current?.clientWidth ?? 400) * 0.82);
+    scrollRef.current?.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
   };
 
   if (!movies.length) return null;
@@ -26,17 +28,13 @@ export default function FreeContentRow({ title, movies }: Props) {
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between mb-3 px-4 sm:px-6">
-        <h2 className="font-serif text-xl sm:text-2xl text-foreground tracking-wide">{title}</h2>
+        <h2 className="font-display text-2xl text-foreground sm:text-3xl">{title}</h2>
         <div className="flex gap-1">
-          <button onClick={() => scroll('left')} className="p-1.5 rounded-full bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-            <ChevronLeft size={18} />
-          </button>
-          <button onClick={() => scroll('right')} className="p-1.5 rounded-full bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-            <ChevronRight size={18} />
-          </button>
+          <Button type="button" variant="ghost" size="icon" onClick={() => scroll('left')} aria-label={`Scroll ${title} left`} className="rounded-full text-muted-foreground"><ChevronLeft /></Button>
+          <Button type="button" variant="ghost" size="icon" onClick={() => scroll('right')} aria-label={`Scroll ${title} right`} className="rounded-full text-muted-foreground"><ChevronRight /></Button>
         </div>
       </div>
-      <div ref={scrollRef} className="flex gap-3 overflow-x-auto px-4 sm:px-6 pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div ref={scrollRef} className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 scroll-smooth [scrollbar-width:none] sm:gap-4 sm:px-6 [&::-webkit-scrollbar]:hidden">
         {movies.map((m, i) => (
           <YouTubeMovieCard key={m.videoId} {...m} index={i} />
         ))}
