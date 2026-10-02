@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Paperclip, Square, X } from "lucide-react";
+import { ArrowUp, Loader2, Mic, Paperclip, Square, X } from "lucide-react";
 import { toast } from "sonner";
 import { ModelPicker } from "./ModelPicker";
 import { cn } from "@/lib/utils";
 import type { FileUIPart } from "ai";
 import { MAX_FILES, MAX_FILE_BYTES, readAttachment, type Attachment } from "@/lib/astra/files";
+import { recordWav, transcribeAudio } from "@/lib/astra/voice";
 
 type Props = {
   onSend: (text: string, images?: FileUIPart[]) => void;
@@ -23,6 +24,41 @@ export function Composer({ onSend, onStop, busy, modelId, reasoning, onModel, on
   const [reading, setReading] = useState(0);
   const ref = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const recorderRef = useRef<{ stop: () => Promise<File> } | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+
+  async function stopAndTranscribe() {
+    const recorder = recorderRef.current;
+    recorderRef.current = null;
+    setRecording(false);
+    if (!recorder) return;
+    setTranscribing(true);
+    try {
+      const file = await recorder.stop();
+      const transcript = await transcribeAudio(file);
+      if (transcript) setText((prev) => (prev ? `${prev} ${transcript}` : transcript));
+      else toast.error("Didn't catch any speech — try again");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Voice input failed");
+    } finally {
+      setTranscribing(false);
+    }
+  }
+
+  async function toggleMic() {
+    if (recording) {
+      await stopAndTranscribe();
+      return;
+    }
+    try {
+      const recorder = await recordWav();
+      recorderRef.current = recorder;
+      setRecording(true);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Microphone is unavailable");
+    }
+  }
 
   async function addFiles(list: FileList | null) {
     const picked = Array.from(list ?? []);
