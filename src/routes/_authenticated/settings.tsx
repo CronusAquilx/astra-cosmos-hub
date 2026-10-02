@@ -184,7 +184,7 @@ function SettingsPage() {
                 </Select>
               </Row>
             </Card>
-            <p className="mt-3 text-xs text-muted-foreground">These choices are saved now; they take effect once a proxy server is connected.</p>
+            <p className="mt-3 text-xs text-muted-foreground">Powered by Scramjet. Leave the Wisp server empty to use the default public server.</p>
           </>
         )}
 

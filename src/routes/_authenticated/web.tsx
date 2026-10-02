@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import { searchUrl, usePrefs } from "@/lib/astra/prefs";
+import { useEffect, useRef, useState } from "react";
+import { searchUrl, usePrefs, type Prefs } from "@/lib/astra/prefs";
+import { openProxied } from "@/lib/astra/proxy";
 import { ExternalLink, Globe, Plus, Search, X } from "lucide-react";
 import { webSearch } from "@/lib/astra/web.functions";
 import { MobileMenuButton } from "@/components/astra/AppShell";
@@ -88,10 +89,14 @@ function Web() {
       </form>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {tab.url ? (
-          <div className="flex h-full flex-col">
-            <iframe key={tab.url} src={tab.url} title={tab.title} className="w-full flex-1 bg-background" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" />
-            <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">Page blank? Some sites don't allow being shown inside other apps — use the open-in-new-window button.</p>
-          </div>
+          prefs.proxyEnabled ? (
+            <ProxiedFrame key={tab.url} url={tab.url} title={tab.title} prefs={prefs} />
+          ) : (
+            <div className="flex h-full flex-col">
+              <iframe key={tab.url} src={tab.url} title={tab.title} className="w-full flex-1 bg-background" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" />
+              <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">Page blank? Some sites don't allow being shown inside other apps — use the open-in-new-window button.</p>
+            </div>
+          )
         ) : tab.loading ? (
           <p className="p-6 text-sm text-muted-foreground">Searching…</p>
         ) : tab.results ? (
@@ -112,6 +117,30 @@ function Web() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ProxiedFrame({ url, title, prefs }: { url: string; title: string; prefs: Prefs }) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  useEffect(() => {
+    let cancelled = false;
+    setStatus("loading");
+    openProxied(ref.current!, url, prefs)
+      .then(() => { if (!cancelled) setStatus("ready"); })
+      .catch(() => { if (!cancelled) setStatus("error"); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, prefs.transport, prefs.wisp]);
+  return (
+    <div className="flex h-full flex-col">
+      <iframe ref={ref} title={title} className="w-full flex-1 bg-background" />
+      <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">
+        {status === "loading" && "Starting the proxy…"}
+        {status === "error" && "The proxy couldn't start — check the Wisp server in Settings → Proxy."}
+        {status === "ready" && `Proxied through ${prefs.transport === "libcurl" ? "Libcurl" : "Epoxy"}.`}
+      </p>
     </div>
   );
 }
