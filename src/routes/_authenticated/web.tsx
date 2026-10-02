@@ -138,8 +138,8 @@ function ProxiedFrame({ url, title, prefs }: { url: string; title: string; prefs
       <iframe ref={ref} title={title} className="w-full flex-1 bg-background" />
       <p className="border-t px-3 py-1.5 text-xs text-muted-foreground">
         {status === "loading" && "Starting the proxy…"}
-        {status === "error" && "None of the proxy servers are reachable from your network (it may be blocking them). Paste a different Wisp server in Settings → Proxy."}
-        {status === "ready" && `Proxied through ${prefs.transport === "libcurl" ? "Libcurl" : "Epoxy"}.`}
+        {status === "error" && "The proxy couldn't start — try reloading the page."}
+        {status === "ready" && "Loaded through the Astra proxy."}
       </p>
     </div>
   );

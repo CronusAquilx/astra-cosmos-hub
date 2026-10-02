@@ -17,7 +17,7 @@ export type Prefs = {
   proxyEnabled: boolean;
   proxyGames: boolean;
   wisp: string;
-  transport: "epoxy" | "libcurl";
+  transport: "astra" | "epoxy" | "libcurl";
   identity: "mirror" | "disguise";
   userAgent: string;
   tabCloak: boolean;
@@ -43,7 +43,7 @@ export const DEFAULT_PREFS: Prefs = {
   proxyEnabled: false,
   proxyGames: false,
   wisp: "",
-  transport: "epoxy",
+  transport: "astra",
   identity: "mirror",
   userAgent: "default",
   tabCloak: false,

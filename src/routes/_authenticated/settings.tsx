@@ -152,13 +152,14 @@ function SettingsPage() {
             <Card title="Proxy">
               <Row title="Proxy websites" desc="Route the Web tab through your proxy server."><Switch checked={p.proxyEnabled} onCheckedChange={(proxyEnabled) => set({ proxyEnabled })} /></Row>
               <Row title="Proxy games" desc="Route games through Scramjet. Doesn't apply to cloud or emulated games."><Switch checked={p.proxyGames} onCheckedChange={(proxyGames) => set({ proxyGames })} /></Row>
-              <Row title="Wisp server" desc="Leave empty for default.">
+              <Row title="Wisp server" desc="Only used by Epoxy and Libcurl. If no Wisp server is reachable, Astra relay is used automatically.">
                 <Input className="w-56" placeholder="wss://your-wisp/" value={p.wisp} onChange={(e) => set({ wisp: e.target.value })} />
               </Row>
             </Card>
             <Card title="Transport">
               <Choice value={p.transport} onChange={(transport) => set({ transport })} options={[
-                { v: "epoxy", label: "Epoxy", sub: "slim TLS · recommended" },
+                { v: "astra", label: "Astra relay", sub: "through Astra's server · works on school wifi" },
+                { v: "epoxy", label: "Epoxy", sub: "slim TLS · needs Wisp" },
                 { v: "libcurl", label: "Libcurl", sub: "OpenSSL TLS · fallback" },
               ]} />
             </Card>
