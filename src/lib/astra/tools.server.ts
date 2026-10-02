@@ -144,8 +144,8 @@ const builders: Record<string, (ctx: Ctx) => ToolSet[string]> = {
             console.error("save image", upErr);
             return { error: "The image was created but couldn't be saved." };
           }
-          const { data: pub } = supabase.storage.from("astra-images").getPublicUrl(path);
-          return { prompt, url: pub.publicUrl };
+          const { data: signed } = await supabase.storage.from("astra-images").createSignedUrl(path, 60 * 60 * 24 * 365);
+          return signed ? { prompt, url: signed.signedUrl } : { error: "The image was created but couldn't be saved." };
         } catch (e) {
           return { error: e instanceof Error && e.name === "AbortError" ? "Cancelled" : "Image generation failed" };
         }
