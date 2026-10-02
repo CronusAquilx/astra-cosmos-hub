@@ -7,7 +7,7 @@ const normalizeApiKey = (value: string) =>
     .replace(/[^0-9a-f]/gi, '')
     .toLowerCase();
 
-const envApiKey = normalizeApiKey(import.meta.env.VITE_TMDB_API_KEY || '');
+const envApiKey = normalizeApiKey(import.meta.env['VITE_TMDB_API_KEY'] || '');
 const fallbackApiKey = normalizeApiKey(DEFAULT_TMDB_API_KEY);
 const API_KEY = envApiKey.length >= 32 ? envApiKey.slice(0, 32) : fallbackApiKey;
 const BASE = 'https://api.themoviedb.org/3';

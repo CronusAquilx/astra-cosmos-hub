@@ -39,7 +39,7 @@ function Detail() {
             <div className="mt-3 flex flex-wrap gap-2">
               <Link to="/movies/watch/$type/$id" params={{ type, id }} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"><Play className="size-4" /> Play</Link>
               <button
-                onClick={() => (saved ? wl.remove.mutate({ tmdb_id: n, media_type: type }) : wl.add.mutate({ tmdb_id: n, media_type: type, title, poster_path: d.poster_path ?? undefined }))}
+                onClick={() => (saved ? wl.remove.mutate({ tmdb_id: n, media_type: type }) : wl.add.mutate({ tmdb_id: n, media_type: type, title, ...(d.poster_path ? { poster_path: d.poster_path } : {}) }))}
                 className="inline-flex items-center gap-2 rounded-md border border-border bg-background/60 px-4 py-2 text-sm"
               >
                 {saved ? <Check className="size-4" /> : <Plus className="size-4" />} My List

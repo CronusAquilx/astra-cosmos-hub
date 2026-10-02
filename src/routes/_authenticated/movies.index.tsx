@@ -57,7 +57,7 @@ function Movies() {
             <ContentRow title="Top rated shows" movies={topTV.data} isLoading={topTV.isLoading} />
             <ContentRow title="Anime" movies={anime.data} isLoading={anime.isLoading} />
             <ContentRow title="K-Drama" movies={kdrama.data} isLoading={kdrama.isLoading} />
-            <FreeContentRow title="Free full movies" movies={YOUTUBE_MOVIES} />
+            <FreeContentRow title="Free full movies" movies={YOUTUBE_MOVIES.map((m) => ({ ...m, source: "youtube" as const }))} />
           </div>
         </>
       )}

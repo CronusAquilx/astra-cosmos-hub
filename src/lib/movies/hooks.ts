@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { tmdb, MOCK_MOVIES, GENRES, type TMDBMovie, type TMDBDetail } from './tmdb';
 
-const API_KEY = (import.meta.env.VITE_TMDB_API_KEY || '0ea74aa80d71c4dc484c0a58f26ea7b8').trim();
+const API_KEY = (import.meta.env['VITE_TMDB_API_KEY'] || '0ea74aa80d71c4dc484c0a58f26ea7b8').trim();
 
 function buildFallbackDetail(id: number, kind: 'movie' | 'tv'): TMDBDetail {
   const fallback = MOCK_MOVIES.find((m) => m.id === id);

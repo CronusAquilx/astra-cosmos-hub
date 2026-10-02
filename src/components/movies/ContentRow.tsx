@@ -6,8 +6,8 @@ import { type TMDBMovie } from '@/lib/movies/tmdb';
 interface Props {
   title: string;
   movies: TMDBMovie[] | undefined;
-  isLoading?: boolean;
-  showRank?: boolean;
+  isLoading?: boolean | undefined;
+  showRank?: boolean | undefined;
 }
 
 function SkeletonCard() {

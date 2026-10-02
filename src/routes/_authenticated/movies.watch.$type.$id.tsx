@@ -25,7 +25,7 @@ function Watch() {
   const recordFn = history.record.mutate;
 
   useEffect(() => {
-    if (d) recordFn({ tmdb_id: n, media_type: type, title: d.title || d.name, poster_path: d.poster_path ?? undefined, ...(isTV ? { season, episode } : {}) });
+    if (d) recordFn({ tmdb_id: n, media_type: type, title: d.title || d.name || "", ...(d.poster_path ? { poster_path: d.poster_path } : {}), ...(isTV ? { season, episode } : {}) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [d?.id, season, episode]);
 

@@ -5,7 +5,7 @@ import { img, type TMDBMovie } from '@/lib/movies/tmdb';
 interface Props {
   movie: TMDBMovie;
   index?: number;
-  showRank?: boolean;
+  showRank?: boolean | undefined;
   compact?: boolean;
 }
 
