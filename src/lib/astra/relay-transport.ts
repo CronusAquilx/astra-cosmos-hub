@@ -17,7 +17,7 @@ export class AstraRelayTransport {
     const payload = body == null || method === "GET" || method === "HEAD" ? null : await new Response(body).arrayBuffer();
     const res = await fetch("/api/proxy", {
       method: "POST",
-      signal,
+      signal: signal ?? null,
       headers: {
         authorization: `Bearer ${token}`,
         "x-astra-url": remote.href,
