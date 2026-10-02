@@ -139,6 +139,22 @@ export function Composer({ onSend, onStop, busy, modelId, reasoning, onModel, on
         <button onClick={() => fileRef.current?.click()} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Attach files">
           <Paperclip className="size-4" />
         </button>
+        {transcribing ? (
+          <span className="flex items-center gap-1.5 rounded-md p-1.5 text-xs text-muted-foreground" aria-live="polite">
+            <Loader2 className="size-4 animate-spin text-star" /> Transcribing…
+          </span>
+        ) : (
+          <button
+            onClick={toggleMic}
+            className={cn(
+              "rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground",
+              recording && "bg-destructive/15 text-destructive hover:bg-destructive/20",
+            )}
+            aria-label={recording ? "Stop recording" : "Voice input"}
+          >
+            <Mic className={cn("size-4", recording && "animate-pulse")} />
+          </button>
+        )}
         <ModelPicker modelId={modelId} reasoning={reasoning} onModel={onModel} onReasoning={onReasoning} />
         <div className="flex-1" />
         {busy ? (
