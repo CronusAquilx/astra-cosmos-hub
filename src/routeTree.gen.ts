@@ -19,6 +19,7 @@ import { Route as AuthenticatedMemoryRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedWebRouteImport } from './routes/_authenticated/web'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiProxyRouteImport } from './routes/api/proxy'
 import { Route as ApiSpeechRouteImport } from './routes/api/speech'
 import { Route as ApiTranscribeRouteImport } from './routes/api/transcribe'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
@@ -77,6 +78,11 @@ const AuthenticatedWebRoute = AuthenticatedWebRouteImport.update({
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProxyRoute = ApiProxyRouteImport.update({
+  id: '/api/proxy',
+  path: '/api/proxy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSpeechRoute = ApiSpeechRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/web': typeof AuthenticatedWebRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/proxy': typeof ApiProxyRoute
   '/api/speech': typeof ApiSpeechRoute
   '/api/transcribe': typeof ApiTranscribeRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/web'
     | '/api/chat'
+    | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
     | '/chat/$threadId'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/web'
     | '/api/chat'
+    | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
     | '/chat/$threadId'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/web'
     | '/api/chat'
+    | '/api/proxy'
     | '/api/speech'
     | '/api/transcribe'
     | '/_authenticated/chat/$threadId'
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiProxyRoute: typeof ApiProxyRoute
   ApiSpeechRoute: typeof ApiSpeechRoute
   ApiTranscribeRoute: typeof ApiTranscribeRoute
 }
@@ -348,6 +361,13 @@ declare module '@tanstack/react-router' {
       path: '/api/chat'
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/proxy': {
+      id: '/api/proxy'
+      path: '/api/proxy'
+      fullPath: '/api/proxy'
+      preLoaderRoute: typeof ApiProxyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/speech': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiProxyRoute: ApiProxyRoute,
   ApiSpeechRoute: ApiSpeechRoute,
   ApiTranscribeRoute: ApiTranscribeRoute,
 }
