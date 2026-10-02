@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Clock, Search } from "lucide-react";
 import { MobileMenuButton } from "@/components/astra/AppShell";
 import HeroBanner from "@/components/movies/HeroBanner";
 import ContentRow from "@/components/movies/ContentRow";
@@ -10,6 +10,8 @@ import MovieCard from "@/components/movies/MovieCard";
 import { useAnime, useKDrama, useNowPlaying, usePopular, useSearch, useTopRatedMovies, useTopRatedTV, useTrending } from "@/lib/movies/hooks";
 import { YOUTUBE_MOVIES } from "@/lib/movies/tmdb";
 import { useWatchlist } from "@/lib/movies/watchlist";
+
+const RECENT_KEY = "astra-movie-searches";
 
 export const Route = createFileRoute("/_authenticated/movies/")({
   head: () => ({ meta: [{ title: "Movies — Astra" }] }),
