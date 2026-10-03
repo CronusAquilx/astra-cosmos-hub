@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Loader2, Mic, Paperclip, Square, X } from "lucide-react";
+import { ArrowUp, AudioLines, Loader2, Mic, Paperclip, Square, X } from "lucide-react";
 import { toast } from "sonner";
 import { ModelPicker } from "./ModelPicker";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import type { FileUIPart } from "ai";
 import { MAX_FILES, MAX_FILE_BYTES, readAttachment, type Attachment } from "@/lib/astra/files";
@@ -157,6 +158,9 @@ export function Composer({ onSend, onStop, busy, modelId, reasoning, onModel, on
         )}
         <ModelPicker modelId={modelId} reasoning={reasoning} onModel={onModel} onReasoning={onReasoning} />
         <div className="flex-1" />
+        <Link to="/voice" className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Voice mode" title="Talk to Astra">
+          <AudioLines className="size-4" />
+        </Link>
         {busy ? (
           <button onClick={onStop} className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground" aria-label="Stop">
             <Square className="size-3.5 fill-current" />
