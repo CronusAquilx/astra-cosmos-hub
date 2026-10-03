@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams, useRouter, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { ArrowLeft, ArrowRight, Bot, Brain, Film, Gamepad2, Globe, Home, Lock, LogOut, Maximize, Shield, Menu, MessageSquare, Plus, RotateCw, Search, Settings, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, Brain, Film, Gamepad2, Globe, AudioLines, Home, Lock, LogOut, Maximize, Shield, Menu, MessageSquare, Plus, RotateCw, Search, Settings, Trash2 } from "lucide-react";
 import { usePrefs } from "@/lib/astra/prefs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,6 +99,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 const RAIL = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/chat", label: "AI", icon: Bot },
+  { to: "/voice", label: "Voice", icon: AudioLines },
   { to: "/web", label: "Web", icon: Globe },
   { to: "/movies", label: "Movies", icon: Film },
   { to: "/games", label: "Games", icon: Gamepad2 },
@@ -198,6 +199,7 @@ function SidebarBody({ onNavigate, onSearch }: { onNavigate: () => void; onSearc
       </div>
       <div className="mt-4 space-y-0.5 px-2">
         <Link to="/home" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Home className="size-4" /> Home</Link>
+        <Link to="/voice" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><AudioLines className="size-4" /> Voice</Link>
         <Link to="/web" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Globe className="size-4" /> Web</Link>
         <Link to="/movies" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Film className="size-4" /> Movies</Link>
         <Link to="/games" onClick={onNavigate} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-accent" }}><Gamepad2 className="size-4" /> Games</Link>

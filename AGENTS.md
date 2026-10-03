@@ -16,3 +16,4 @@
 - Authenticated pages live under `src/routes/_authenticated/` with `ssr: false`, since the session lives in browser storage.
 - Agent tools are defined in `src/lib/astra/tools.server.ts` and gated by rows in the `tools` table (enabled flag), so tools are switched on/off by data.
 - The web proxy defaults to the Astra relay transport (`src/lib/astra/relay-transport.ts` → authenticated `/api/proxy` server route) so browsers only contact the app domain; Wisp transports (Epoxy/Libcurl) fall back to the relay when no Wisp server is reachable, because school/work networks block public Wisp hosts.
+- Voice mode uses GPT Live via a persistent WebSocket relay (`src/lib/live-relay.server.ts`, dispatched at `/api/live` in `src/server.ts`, dev via `live-vite-plugin.ts`); the browser passes its session token as a query param because browser WebSockets cannot set headers, and the relay keeps the gateway key server-side.
