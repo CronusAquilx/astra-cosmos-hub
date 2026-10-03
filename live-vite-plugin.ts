@@ -43,7 +43,7 @@ const connectGateway: LiveConnector = (address, headers, signal) =>
     const socket = new WebSocket(url, {
       headers,
       handshakeTimeout: 10_000,
-      maxPayload: 2 * 1024 * 1024,
+      maxPayload: 5 * 1024 * 1024,
       followRedirects: false,
       perMessageDeflate: false,
     });
@@ -110,7 +110,7 @@ export function liveVoiceDev(): Plugin {
     configureServer(server) {
       const httpServer = server.httpServer;
       if (!httpServer) throw new Error("Live voice preview requires Vite's HTTP server");
-      const sockets = new WebSocketServer({ noServer: true, maxPayload: 2 * 1024 * 1024 });
+      const sockets = new WebSocketServer({ noServer: true, maxPayload: 5 * 1024 * 1024 });
       let disposed = false;
       const upgrade = (request: IncomingMessage, socket: Duplex, head: Buffer) => {
         if (request.url?.split("?", 1)[0] !== "/api/live") return;
@@ -137,6 +137,7 @@ export function liveVoiceDev(): Plugin {
                   },
                 },
                 connectGateway,
+                new URL(request.url ?? "/", "http://localhost").searchParams.get("token") ?? undefined,
               );
             });
           } catch {
