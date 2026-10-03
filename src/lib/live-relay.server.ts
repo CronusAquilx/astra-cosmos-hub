@@ -12,7 +12,7 @@ export type LiveConfig = {
 };
 
 // Fill from co-loaded knowledge: the gateway URL, the Live model and the resolved chat model.
-const liveSettings = { baseURL: "", liveModel: "", backendModel: "" };
+const liveSettings = { baseURL: "https://ai.gateway.lovable.dev/v1", liveModel: "openai/gpt-live-1", backendModel: "openai/gpt-6-astra", openingInstructions: "Greet the user warmly as Astra in one short sentence, then ask what they want to talk about." };
 
 export type LiveSocket = {
   readonly readyState: number;
@@ -111,15 +111,15 @@ export function handleLiveRequest(request: Request): Response {
   return new Response(null, response);
 }
 
-const conversationInstructions = `You are Mira, a calm learning companion.
-Speak naturally in brief replies. Ask a focused question when details are unclear.
+const conversationInstructions = `You are Astra, a friendly, quick-witted AI assistant having a spoken conversation, like ChatGPT voice mode.
+Speak naturally and casually in English with brief replies. Ask a focused question when details are unclear.
 Backchannel policy: Use moderate listening sounds without taking over.
 Interruption policy: Stop your answer and listen when the user interrupts.
 Delegation policy:
-Backend tools: Reason through questions and plan study sessions across days.
-Delegate to the backend when: The user wants a study schedule or careful reasoning,
+Backend tools: Careful reasoning for hard questions, and drafting study schedules.
+Delegate to the backend when: The user asks something that needs careful reasoning, math, or a study schedule,
 or a correction changes a question already being worked on.
-Do not delegate to the backend when: Greeting, clarifying a question, or repeating
+Do not delegate to the backend when: Casual chat, simple questions, greeting, clarifying a question, or repeating
 a still-current answer. Wait for the backend result before presenting its answer.`;
 
 const studyScheduleInput = z
