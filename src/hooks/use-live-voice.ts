@@ -116,7 +116,11 @@ export function useLiveVoice(
     void controller.current?.resumePlayback();
   }, []);
 
-  return { ...call, audioRef, start, stop, setMuted, resumePlayback };
+  const sendContext = useCallback((payload: { text?: string; image?: string; name?: string }) => {
+    return controller.current?.sendContext(payload) ?? false;
+  }, []);
+
+  return { ...call, audioRef, start, stop, setMuted, resumePlayback, sendContext };
 }
 
 type LiveOptions = {
@@ -396,5 +400,11 @@ function createLiveVoice(options: LiveOptions) {
     }
   }
 
-  return { start, stop, setMuted, resumePlayback };
+  function sendContext(payload: { text?: string; image?: string; name?: string }) {
+    if (state !== "active" || socket?.readyState !== WebSocket.OPEN) return false;
+    send({ type: "app.context", ...payload });
+    return true;
+  }
+
+  return { start, stop, setMuted, resumePlayback, sendContext };
 }

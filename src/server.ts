@@ -54,7 +54,7 @@ export default {
         const token = url.searchParams.get("token") ?? "";
         const user = await authenticateRequest(new Request(request.url, { headers: { authorization: `Bearer ${token}` } }));
         if (!user) return new Response("Please sign in again.", { status: 401 });
-        return handleLiveRequest(request);
+        return handleLiveRequest(request, token);
       }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
